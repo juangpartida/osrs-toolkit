@@ -1,0 +1,999 @@
+:root {
+    --osrs-brown: #463423;
+    --osrs-dark-brown: #2b1f15;
+    --osrs-gold: #daa520;
+    --osrs-light-brown: #695339;
+    --osrs-black: #000000;
+    --osrs-text: #ff981f;
+    --osrs-text-shadow: #000000;
+    --chat-background: rgba(0, 0, 0, 0.8);
+    --skill-background: #3e3529;
+    --skill-hover: #4a4131;
+    --skill-border: #2e2b23;
+  }
+  
+  @font-face {
+    font-family: 'RuneScape';
+    src: url('https://cdn.jsdelivr.net/gh/RuneStar/fonts@1.0/RuneScape-Plain-12.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'RuneScape', 'Arial', sans-serif;
+    background-color: var(--osrs-black);
+    background-image: url('https://oldschool.runescape.wiki/images/thumb/Login_background.jpg/1920px-Login_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--osrs-text);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(43, 31, 21, 0.95);
+    border: 2px solid var(--osrs-gold);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .osrs-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  h1 {
+    font-size: 36px;
+    color: var(--osrs-gold);
+    text-shadow: 2px 2px var(--osrs-text-shadow);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: var(--osrs-brown);
+    border-radius: 5px;
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--osrs-light-brown);
+    color: var(--osrs-text);
+    border: 1px solid var(--osrs-gold);
+    padding: 12px 24px;
+    cursor: pointer;
+    font-family: 'RuneScape', 'Arial', sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    min-width: 160px;
+  }
+  
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+  }
+  
+  .tab-button.active,
+  .tab-button:hover {
+    background: var(--osrs-gold);
+    color: var(--osrs-dark-brown);
+  }
+  
+  .content-box {
+    background: var(--chat-background);
+    border: 1px solid var(--osrs-gold);
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  
+  input {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    font-size: 16px;
+    font-family: 'RuneScape', 'Arial', sans-serif;
+    background: var(--osrs-dark-brown);
+    border: 2px solid var(--osrs-gold);
+    border-radius: 4px;
+    color: var(--osrs-text);
+  }
+  
+  .osrs-button {
+    background: var(--osrs-brown);
+    color: var(--osrs-text);
+    border: 2px solid var(--osrs-gold);
+    padding: 12px 24px;
+    font-family: 'RuneScape', 'Arial', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+  
+  .osrs-button:hover {
+    background: var(--osrs-gold);
+    color: var(--osrs-dark-brown);
+    transform: translateY(-2px);
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  .output-container {
+    background: var(--chat-background);
+    border: 1px solid var(--osrs-gold);
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 200px;
+  }
+  
+  /* Skills Grid Styling */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 4px;
+    background: var(--skill-border);
+    padding: 4px;
+    border: 2px solid var(--skill-border);
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+  
+  .skill-tile {
+    background: var(--skill-background);
+    padding: 8px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-height: 90px;
+  }
+  
+  .skill-tile:hover {
+    background: var(--skill-hover);
+    cursor: pointer;
+  }
+  
+  .skill-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .skill-icon {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+  }
+  
+  .skill-name {
+    font-size: 12px;
+    color: var(--osrs-text);
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+    text-align: center;
+  }
+  
+  .skill-info {
+    text-align: center;
+    margin-top: 4px;
+  }
+  
+  .skill-level {
+    color: var(--osrs-text);
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .skill-xp {
+    color: #888;
+    font-size: 10px;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--osrs-dark-brown);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--osrs-gold);
+    border-radius: 6px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--osrs-text);
+  }
+
+  .rankings-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ranking-tile {
+    background: #222;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    width: 200px;
+    text-align: center;
+    border: 1px solid #ffd700;
+}
+
+.ranking-name {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.ranking-info span {
+    display: block;
+}
+
+/* Add these styles to your existing styles.css */
+
+.ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+    background: var(--skill-border);
+    padding: 4px;
+    border: 2px solid var(--skill-border);
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.ranking-tile {
+    background: var(--skill-background);
+    padding: 12px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 100px;
+}
+
+.ranking-tile:hover {
+    background: var(--skill-hover);
+    cursor: pointer;
+}
+
+.ranking-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ranking-icon {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+}
+
+.ranking-name {
+    font-size: 14px;
+    color: var(--osrs-text);
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+    text-align: center;
+}
+
+.ranking-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ranking-rank {
+    color: var(--osrs-gold);
+    font-size: 14px;
+}
+
+.ranking-score {
+    color: var(--osrs-text);
+    font-size: 12px;
+}
+
+.rankings-section {
+    margin-bottom: 20px;
+}
+
+.rankings-section h3 {
+    color: var(--osrs-gold);
+    margin-bottom: 10px;
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+}
+
+.unranked {
+    color: #666;
+    font-style: italic;
+}
+
+/* Rankings Section Styles */
+.rankings-section {
+    margin-bottom: 30px;
+}
+
+.rankings-section h3 {
+    color: var(--osrs-gold);
+    margin: 25px 0 15px 0;
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+    font-size: 18px;
+    padding-left: 4px;
+}
+
+.ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    background: var(--skill-border);
+    padding: 12px;
+    border: 2px solid var(--skill-border);
+    border-radius: 4px;
+}
+
+.ranking-tile {
+    background: var(--skill-background);
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--osrs-gold);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 90px;
+}
+
+.ranking-tile:hover {
+    background: var(--skill-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-header {
+    margin-bottom: 8px;
+}
+
+.ranking-name {
+    font-size: 14px;
+    color: var(--osrs-gold);
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.ranking-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ranking-score {
+    color: var(--osrs-text);
+    font-size: 14px;
+}
+
+.ranking-score.unranked {
+    color: #666;
+    font-style: italic;
+}
+
+/* Remove any conflicting or duplicate styles */
+.rankings-grid,
+.ranking-icon,
+.ranking-rank {
+    display: none;
+}
+
+/* Grand Exchange Styling */
+.ge-item {
+    background: var(--skill-background);
+    border: 1px solid var(--osrs-gold);
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.ge-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.ge-icon {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+}
+
+.ge-header h3 {
+    color: var(--osrs-gold);
+    font-size: 20px;
+    margin: 0;
+}
+
+.ge-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ge-description {
+    color: #ccc;
+    font-style: italic;
+    margin: 0;
+}
+
+.ge-type {
+    color: var(--osrs-text);
+    margin: 0;
+}
+
+.ge-price-info {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.ge-current-price {
+    color: var(--osrs-gold);
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.ge-trends {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.ge-trend {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.trend-positive {
+    color: #00ff00;
+}
+
+.trend-negative {
+    color: #ff0000;
+}
+
+.trend-neutral {
+    color: #ffff00;
+}
+
+.rankings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background: #1c1c1c;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.ranking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #333;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.ranking-name {
+    font-weight: bold;
+}
+
+.ranking-rank {
+    background: #ffcc00;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    background: var(--skill-border);
+    padding: 12px;
+    border: 2px solid var(--skill-border);
+    border-radius: 4px;
+}
+
+.ranking-tile {
+    background: var(--skill-background);
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--osrs-gold);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 90px;
+}
+
+.ranking-tile:hover {
+    background: var(--skill-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-name {
+    font-size: 14px;
+    color: var(--osrs-gold);
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.ranking-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ranking-score {
+    color: var(--osrs-text);
+    font-size: 14px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    background: var(--skill-border);
+    padding: 12px;
+    border-radius: 4px;
+}
+
+.skill-tile {
+    background: var(--skill-background);
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--osrs-gold);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 90px;
+}
+
+.skill-tile:hover {
+    background: var(--skill-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.skill-name {
+    font-size: 14px;
+    color: var(--osrs-gold);
+    text-shadow: 1px 1px var(--osrs-text-shadow);
+    font-weight: bold;
+    text-align: center;
+}
+
+.skill-level, .skill-xp {
+    color: var(--osrs-text);
+    font-size: 14px;
+    text-align: center;
+}
+/* New styles for feature descriptions and tooltips */
+.feature-notes {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.feature-requirements,
+.feature-limitations {
+  margin: 8px 0;
+  padding-left: 15px;
+}
+
+.feature-requirements strong,
+.feature-limitations strong {
+  color: var(--osrs-gold);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.feature-requirements div,
+.feature-limitations div {
+  margin-bottom: 4px;
+}
+
+.tip {
+  margin-top: 12px;
+  padding: 8px;
+  background: rgba(218, 165, 32, 0.1);
+  border-left: 3px solid var(--osrs-gold);
+  border-radius: 0 4px 4px 0;
+}
+
+.tip strong {
+  color: var(--osrs-gold);
+}
+
+/* Button tooltip styling */
+.button-tooltip {
+  position: absolute;
+  background: var(--osrs-dark-brown);
+  color: var(--osrs-text);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--osrs-gold);
+  font-size: 14px;
+  z-index: 1000;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 5px 5px 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--osrs-gold) transparent;
+}
+
+/* Update header tooltip for better visibility */
+.tooltip-content {
+  width: 300px;
+  padding: 15px;
+}
+
+.tooltip-content strong {
+  color: var(--osrs-gold);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.tooltip-content hr {
+  border: none;
+  border-top: 1px solid var(--osrs-gold);
+  margin: 10px 0;
+}
+
+/* Collapsible sections */
+.collapsible {
+  background: var(--osrs-brown);
+  color: var(--osrs-gold);
+  cursor: pointer;
+  padding: 12px;
+  width: 100%;
+  border: 1px solid var(--osrs-gold);
+  border-radius: 4px;
+  text-align: left;
+  outline: none;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.collapsible:hover {
+  background: var(--osrs-light-brown);
+}
+
+.collapsible:after {
+  content: '▼';
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.collapsible.active:after {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background: var(--chat-background);
+  border-radius: 0 0 4px 4px;
+}
+
+.collapsible-content.active {
+  padding: 12px;
+  max-height: 500px;
+  border: 1px solid var(--osrs-gold);
+  border-top: none;
+  margin-bottom: 12px;
+}
+
+/* Tutorial overlay */
+.tutorial-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+}
+
+.tutorial-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--osrs-dark-brown);
+  border: 2px solid var(--osrs-gold);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.tutorial-step {
+  display: none;
+  color: var(--osrs-text);
+}
+
+.tutorial-step.active {
+  display: block;
+}
+
+.tutorial-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--osrs-gold);
+}
+
+.tutorial-button {
+  background: var(--osrs-brown);
+  color: var(--osrs-text);
+  border: 1px solid var(--osrs-gold);
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.tutorial-button:hover {
+  background: var(--osrs-gold);
+  color: var(--osrs-dark-brown);
+}
+
+.tutorial-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Info badges */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--osrs-gold);
+  color: var(--osrs-dark-brown);
+  font-size: 12px;
+  font-weight: bold;
+  cursor: help;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Enhanced tooltips */
+.enhanced-tooltip {
+  position: absolute;
+  background: var(--osrs-dark-brown);
+  color: var(--osrs-text);
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--osrs-gold);
+  font-size: 14px;
+  z-index: 1000;
+  pointer-events: none;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.enhanced-tooltip.detailed {
+  pointer-events: auto;
+  cursor: auto;
+}
+
+/* Help menu */
+.help-menu {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 900;
+}
+
+.help-button {
+  background: var(--osrs-gold);
+  color: var(--osrs-dark-brown);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.help-button:hover {
+  transform: scale(1.1);
+}
+
+.help-content {
+  display: none;
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: var(--osrs-dark-brown);
+  border: 1px solid var(--osrs-gold);
+  border-radius: 8px;
+  padding: 15px;
+  width: 250px;
+}
+
+.help-content.active {
+  display: block;
+}
+
+/* Quick reference panel */
+.quick-reference {
+  position: fixed;
+  right: -300px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 300px;
+  background: var(--osrs-dark-brown);
+  border: 1px solid var(--osrs-gold);
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  padding: 15px;
+  transition: right 0.3s ease;
+  z-index: 800;
+}
+
+.quick-reference.active {
+  right: 0;
+}
+
+.quick-reference-toggle {
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--osrs-gold);
+  color: var(--osrs-dark-brown);
+  width: 30px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid var(--osrs-gold);
+  border-right: none;
+}
+
+/* Add to existing styles */
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border: 3px solid var(--osrs-dark-brown);
+  border-radius: 50%;
+  border-top-color: var(--osrs-gold);
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+
+.osrs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  position: relative;
+}
+
+.osrs-button.loading {
+  background: var(--osrs-dark-brown);
+  cursor: not-allowed;
+}
+
+.osrs-button.loading:hover {
+  background: var(--osrs-dark-brown);
+  transform: none;
+}
+
+@keyframes spin {
+  to {
+      transform: rotate(360deg);
+  }
+}
+

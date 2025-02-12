@@ -1,0 +1,14 @@
+{
+    "name": "osrs-toolkit",
+    "version": "1.0.0",
+    "description": "OSRS Toolkit using Electron and ZeroMQ",
+    "main": "main.js",
+    "scripts": {
+      "start": "electron ."
+    },
+    "dependencies": {
+      "electron": "^26.0.0",
+      "zeromq": "^6.0.0"
+    }
+  }
+  

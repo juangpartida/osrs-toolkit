@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OSRS Toolkit</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="osrs-header">
+            <h1>🗡️ OSRS Toolkit 🛡️</h1>
+            <div class="tooltip-container">
+                <span class="info-icon">ℹ️</span>
+                <div class="tooltip-content">
+                    Welcome to OSRS Toolkit! This tool helps you track your RuneScape progress across multiple areas.
+                    Simply select a tab and enter your username or item ID to get started.
+                </div>
+            </div>
+        </header>
+
+        <!-- Rate Limit Warning -->
+        <div id="rateLimitWarning" class="rate-limit-warning" style="display: none;">
+            <div class="warning-content">
+                <h3>⚠️ Please Slow Down!</h3>
+                <p>You're making too many requests too quickly. Please wait a moment before trying again.</p>
+                <div class="cooldown-timer">
+                    <span>Cooldown: <span id="cooldownTime">5</span>s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Confirmation Modal -->
+        <div id="confirmationModal" class="confirmation-modal" style="display: none;">
+            <div class="modal-content">
+                <h3>⚠️ Confirm Action</h3>
+                <p id="confirmationMessage"></p>
+                <div class="modal-buttons">
+                    <button id="cancelAction" class="osrs-button cancel-button">Cancel</button>
+                    <button id="confirmAction" class="osrs-button confirm-button">Proceed</button>
+                </div>
+                <div class="remember-choice">
+                    <label>
+                        <input type="checkbox" id="rememberChoice">
+                        Don't show this warning again
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="tabs">
+            <button class="tab-button" onclick="openTab(event, 'quests')" title="Track your quest progress and completion status">
+                <img src="https://oldschool.runescape.wiki/images/Quest_point_icon.png" alt="Quest" class="tab-icon">
+                Quests
+            </button>
+            <button class="tab-button active" onclick="openTab(event, 'skills')" title="View detailed skill levels, experience, and rankings">
+                <img src="https://oldschool.runescape.wiki/images/Stats_icon.png" alt="Skills" class="tab-icon">
+                Skills
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'rankings')" title="Check your rankings across various activities and minigames">
+                <img src="https://oldschool.runescape.wiki/images/HiScores_icon.png" alt="Rankings" class="tab-icon">
+                Rankings
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'ge')" title="Look up current Grand Exchange prices and trends">
+                <img src="https://oldschool.runescape.wiki/images/Grand_Exchange_icon.png" alt="GE" class="tab-icon">
+                Grand Exchange
+            </button>
+        </nav>
+        
+        <main>
+            <div id="quests" class="tab-content">
+                <div class="content-box">
+                    <h2>Quest Tracker</h2>
+                    <div class="feature-description">
+                        Track your quest progress, points, and completion status. Enter your username to see which quests you've completed and which ones you still need to tackle.
+                    </div>
+                    <div class="input-group">
+                        <input id="quest-username" type="text" placeholder="Enter RuneScape Username">
+                        <div class="button-group">
+                            <button id="quest-button" class="osrs-button">Check Quests</button>
+                            <button id="quest-clear" class="osrs-button clear-button" data-target="quest-output">Clear</button>
+                        </div>
+                    </div>
+                    <div id="quest-output" class="output-container"></div>
+                </div>
+            </div>
+
+            <div id="skills" class="tab-content active">
+                <div class="content-box">
+                    <h2>Skill Tracker</h2>
+                    <div class="feature-description">
+                        View detailed information about your skill levels, experience points, and rankings. Track your progress towards max level or compare your stats with others.
+                    </div>
+                    <div class="input-group">
+                        <input id="skill-username" type="text" placeholder="Enter RuneScape Username">
+                        <div class="button-group">
+                            <button id="skill-button" class="osrs-button">Check Skills</button>
+                            <button id="skill-clear" class="osrs-button clear-button" data-target="output">Clear</button>
+                        </div>
+                    </div>
+                    <div id="output" class="output-container"></div>
+                </div>
+            </div>
+
+            <div id="rankings" class="tab-content">
+                <div class="content-box">
+                    <h2>Rankings Lookup</h2>
+                    <div class="feature-description">
+                        Check your rankings in various activities including boss kills, clue scrolls, and minigames. See how you stack up against other players.
+                    </div>
+                    <div class="input-group">
+                        <input id="ranking-username" type="text" placeholder="Enter RuneScape Username">
+                        <div class="button-group">
+                            <button id="ranking-button" class="osrs-button">Check Rankings</button>
+                            <button id="ranking-clear" class="osrs-button clear-button" data-target="ranking-output">Clear</button>
+                        </div>
+                    </div>
+                    <div id="ranking-output" class="output-container"></div>
+                </div>
+            </div>
+
+            <div id="ge" class="tab-content">
+                <div class="content-box">
+                    <h2>Grand Exchange Lookup</h2>
+                    <div class="feature-description">
+                        Look up current prices, price trends, and market information for any item in the Grand Exchange. Enter an item ID to see its market details.
+                        <div class="tip">💡 Tip: You can find item IDs by searching the OSRS Wiki or using the in-game examine feature.</div>
+                    </div>
+                    <div class="input-group">
+                        <input id="item-id" type="text" placeholder="Enter Item ID">
+                        <div class="button-group">
+                            <button id="ge-button" class="osrs-button">Check Price</button>
+                            <button id="ge-clear" class="osrs-button clear-button" data-target="ge-output">Clear</button>
+                        </div>
+                    </div>
+                    <div id="ge-output" class="output-container"></div>
+                </div>
+            </div>
+
+            <!-- Add Quick Reference Panel -->
+            <div class="quick-reference">
+                <div class="quick-reference-toggle">?</div>
+                <h3>Quick Reference</h3>
+                <div class="collapsible">Common Item IDs</div>
+                <div class="collapsible-content">
+                    <ul>
+                        <li>2: Cannonball</li>
+                        <li>4151: Abyssal whip</li>
+                        <li>11802: Armadyl godsword</li>
+                        <!-- Add more items as needed -->
+                    </ul>
+                </div>
+                
+                <div class="collapsible">Skill Abbreviations</div>
+                <div class="collapsible-content">
+                    <ul>
+                        <li>ATT: Attack</li>
+                        <li>STR: Strength</li>
+                        <li>DEF: Defence</li>
+                        <!-- Add more abbreviations -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Add Tutorial Overlay -->
+            <div class="tutorial-overlay">
+                <div class="tutorial-content">
+                    <div class="tutorial-step" data-step="1">
+                        <h3>Welcome to OSRS Toolkit!</h3>
+                        <p>This tutorial will show you how to make the most of our features.</p>
+                    </div>
+                    <div class="tutorial-step" data-step="2">
+                        <h3>Checking Skills</h3>
+                        <p>Enter your RuneScape username to view your skill levels, experience, and rankings.</p>
+                        <img src="https://oldschool.runescape.wiki/images/Stats_icon.png" alt="Skills tutorial">
+                    </div>
+                    <!-- Add more tutorial steps -->
+                    <div class="tutorial-navigation">
+                        <button class="tutorial-button" id="prevStep">Previous</button>
+                        <button class="tutorial-button" id="nextStep">Next</button>
+                        <button class="tutorial-button" id="skipTutorial">Skip Tutorial</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Help Menu -->
+            <div class="help-menu">
+                <div class="help-button">?</div>
+                <div class="help-content">
+                    <h3>Need Help?</h3>
+                    <button class="collapsible">Show Tutorial</button>
+                    <div class="collapsible-content">
+                        <p>Learn how to use all features step by step.</p>
+                        <button class="tutorial-button" onclick="startTutorial()">Start Tutorial</button>
+                    </div>
+                    
+                    <button class="collapsible">Quick Tips</button>
+                    <div class="collapsible-content">
+                        <ul>
+                            <li>Hover over icons for more info</li>
+                            <li>Use exact usernames</li>
+                            <li>Check the side panel for references</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .info-icon {
+            cursor: help;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            width: 250px;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tooltip-container:hover .tooltip-content {
+            display: block;
+        }
+
+        .feature-description {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .tip {
+            margin-top: 8px;
+            font-style: italic;
+            color: #666;
+        }
+
+        [title] {
+            position: relative;
+            cursor: help;
+        }
+
+        /* Add to existing styles */
+        .rate-limit-warning {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--osrs-dark-brown);
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .warning-content {
+            text-align: center;
+            color: var(--osrs-text);
+        }
+
+        .warning-content h3 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .cooldown-timer {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .confirmation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--osrs-dark-brown);
+            border: 2px solid var(--osrs-gold);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            color: var(--osrs-text);
+        }
+
+        .modal-content h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #ff9f1c;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .cancel-button {
+            background: var(--osrs-brown);
+        }
+
+        .confirm-button {
+            background: #ff9f1c;
+            color: var(--osrs-dark-brown);
+            font-weight: bold;
+        }
+
+        .remember-choice {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .dangerous-action {
+            position: relative;
+        }
+
+        .dangerous-action::before {
+            content: "⚠️";
+            position: absolute;
+            left: -25px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .clear-button {
+            background: var(--osrs-brown);
+            border: 1px solid var(--osrs-gold);
+            min-width: auto !important;
+            padding: 8px 16px;
+        }
+
+        .clear-button:hover {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .output-container {
+            transition: opacity 0.3s ease;
+        }
+
+        .output-container.clearing {
+            opacity: 0;
+        }
+    </style>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Add collapsible functionality
+        document.querySelectorAll('.collapsible').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+
+        // Tutorial functionality
+        let currentStep = 1;
+        const totalSteps = document.querySelectorAll('.tutorial-step').length;
+
+        function updateTutorialButtons() {
+            document.getElementById('prevStep').disabled = currentStep === 1;
+            document.getElementById('nextStep').textContent = 
+                currentStep === totalSteps ? 'Finish' : 'Next';
+        }
+
+        function showTutorialStep(step) {
+            document.querySelectorAll('.tutorial-step').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+            updateTutorialButtons();
+        }
+
+        function startTutorial() {
+            document.querySelector('.tutorial-overlay').style.display = 'block';
+            currentStep = 1;
+            showTutorialStep(currentStep);
+        }
+
+        document.getElementById('nextStep').addEventListener('click', () => {
+            if (currentStep === totalSteps) {
+                document.querySelector('.tutorial-overlay').style.display = 'none';
+            } else {
+                currentStep++;
+                showTutorialStep(currentStep);
+            }
+        });
+
+        document.getElementById('prevStep').addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showTutorialStep(currentStep);
+            }
+        });
+
+        document.getElementById('skipTutorial').addEventListener('click', () => {
+            document.querySelector('.tutorial-overlay').style.display = 'none';
+        });
+
+        // Quick reference panel toggle
+        document.querySelector('.quick-reference-toggle').addEventListener('click', () => {
+            document.querySelector('.quick-reference').classList.toggle('active');
+        });
+
+        // Help menu toggle
+        document.querySelector('.help-button').addEventListener('click', () => {
+            document.querySelector('.help-content').classList.toggle('active');
+        });
+
+        // Enhanced tooltips
+        function createEnhancedTooltip(element, content, detailed = false) {
+            const tooltip = document.createElement('div');
+            tooltip.className = `enhanced-tooltip${detailed ? ' detailed' : ''}`;
+            tooltip.innerHTML = content;
+            
+            element.addEventListener('mouseenter', (e) => {
+                document.body.appendChild(tooltip);
+                const rect = element.getBoundingClientRect();
+                tooltip.style.left = `${rect.left}px`;
+                tooltip.style.top = `${rect.bottom + 5}px`;
+            });
+
+            element.addEventListener('mouseleave', () => {
+                if (tooltip.parentNode) {
+                    tooltip.parentNode.removeChild(tooltip);
+                }
+            });
+        }
+
+        // Initialize enhanced tooltips
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add tooltips to various elements
+            const tooltipElements = document.querySelectorAll('[data-tooltip]');
+            tooltipElements.forEach(element => {
+                createEnhancedTooltip(element, element.dataset.tooltip);
+            });
+        });
+
+        // Add to your existing JavaScript
+        class MindfulInteraction {
+            constructor() {
+                this.rateLimitWarning = document.getElementById('rateLimitWarning');
+                this.confirmationModal = document.getElementById('confirmationModal');
+                this.cooldownTime = document.getElementById('cooldownTime');
+                this.rememberChoice = document.getElementById('rememberChoice');
+                
+                this.requestCounts = {};
+                this.cooldowns = new Set();
+                this.rememberedChoices = new Set();
+                
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Setup confirmation modal buttons
+                document.getElementById('cancelAction').addEventListener('click', () => {
+                    this.hideConfirmationModal();
+                });
+
+                document.getElementById('confirmAction').addEventListener('click', () => {
+                    const action = this.confirmationModal.dataset.action;
+                    if (this.rememberChoice.checked) {
+                        this.rememberedChoices.add(action);
+                    }
+                    this.hideConfirmationModal();
+                    this.executeAction(action);
+                });
+
+                // Add rate limiting to all input fields
+                document.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', () => {
+                        if (!this.checkRateLimit('input')) {
+                            input.blur();
+                        }
+                    });
+                });
+
+                // Add confirmation to dangerous actions
+                document.querySelectorAll('[data-warning]').forEach(element => {
+                    element.classList.add('dangerous-action');
+                    element.addEventListener('click', (e) => {
+                        const action = element.dataset.warning;
+                        if (!this.rememberedChoices.has(action)) {
+                            e.preventDefault();
+                            this.showConfirmationModal(action);
+                        }
+                    });
+                });
+            }
+
+            checkRateLimit(action) {
+                const now = Date.now();
+                if (!this.requestCounts[action]) {
+                    this.requestCounts[action] = {
+                        count: 1,
+                        firstRequest: now
+                    };
+                } else {
+                    const timeDiff = now - this.requestCounts[action].firstRequest;
+                    if (timeDiff < 1000) { // 1 second window
+                        this.requestCounts[action].count++;
+                        if (this.requestCounts[action].count > 5) { // More than 5 requests per second
+                            this.showRateLimitWarning();
+                            return false;
+                        }
+                    } else {
+                        this.requestCounts[action] = {
+                            count: 1,
+                            firstRequest: now
+                        };
+                    }
+                }
+                return true;
+            }
+
+            showRateLimitWarning() {
+                if (this.cooldowns.has('input')) return;
+                
+                this.cooldowns.add('input');
+                this.rateLimitWarning.style.display = 'block';
+                
+                let countdown = 5;
+                this.cooldownTime.textContent = countdown;
+                
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    this.cooldownTime.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        this.rateLimitWarning.style.display = 'none';
+                        this.cooldowns.delete('input');
+                    }
+                }, 1000);
+            }
+
+            showConfirmationModal(action) {
+                const warnings = {
+                    'clear-all': 'This will clear all your current data. This action cannot be undone.',
+                    'delete-item': 'Are you sure you want to delete this item? This action cannot be undone.',
+                    'bulk-action': 'You are about to perform a bulk action that will affect multiple items.',
+                };
+
+                const message = document.getElementById('confirmationMessage');
+                message.textContent = warnings[action] || 'Are you sure you want to proceed?';
+                
+                this.confirmationModal.dataset.action = action;
+                this.confirmationModal.style.display = 'flex';
+            }
+
+            hideConfirmationModal() {
+                this.confirmationModal.style.display = 'none';
+                this.rememberChoice.checked = false;
+            }
+
+            executeAction(action) {
+                // Implement the actual action logic here
+                console.log(`Executing action: ${action}`);
+            }
+        }
+
+        // Initialize mindful interaction features
+        document.addEventListener('DOMContentLoaded', () => {
+            const mindfulInteraction = new MindfulInteraction();
+        });
+
+        // Add clear functionality
+        document.querySelectorAll('.clear-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.target;
+                const outputContainer = document.getElementById(targetId);
+                
+                if (outputContainer) {
+                    // Add clearing animation
+                    outputContainer.classList.add('clearing');
+                    
+                    // Clear content after animation
+                    setTimeout(() => {
+                        outputContainer.innerHTML = '';
+                        outputContainer.classList.remove('clearing');
+                    }, 300);
+                }
+            });
+        });
+    </script>
+    <script src="./renderer.js"></script>
+</body>
+</html>
+
+<!-- <!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OSRS Toolkit</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="osrs-header">
+            <h1>🗡️ OSRS Toolkit 🛡️</h1>
+        </header>
+        
+        <nav class="tabs">
+            <button class="tab-button" onclick="openTab(event, 'quests')">
+                <img src="https://oldschool.runescape.wiki/images/Quest_point_icon.png" alt="Quest" class="tab-icon">
+                Quests
+            </button>
+            <button class="tab-button active" onclick="openTab(event, 'skills')">
+                <img src="https://oldschool.runescape.wiki/images/Stats_icon.png" alt="Skills" class="tab-icon">
+                Skills
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'rankings')">
+                <img src="https://oldschool.runescape.wiki/images/HiScores_icon.png" alt="Rankings" class="tab-icon">
+                Rankings
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'ge')">
+                <img src="https://oldschool.runescape.wiki/images/Grand_Exchange_icon.png" alt="GE" class="tab-icon">
+                Grand Exchange
+            </button>
+        </nav>
+
+        <main>
+            <div id="quests" class="tab-content">
+                <div class="content-box">
+                    <h2>Quest Tracker</h2>
+                    <div class="input-group">
+                        <input id="quest-username" type="text" placeholder="Enter RuneScape Username">
+                        <button id="quest-button" class="osrs-button">Check Quests</button>
+                    </div>
+                    <div id="quest-output" class="output-container"></div>
+                </div>
+            </div>
+
+            <div id="skills" class="tab-content active">
+                <div class="content-box">
+                    <h2>Skill Tracker</h2>
+                    <div class="input-group">
+                        <input id="skill-username" type="text" placeholder="Enter RuneScape Username">
+                        <button id="skill-button" class="osrs-button">Check Skills</button>
+                    </div>
+                    <div id="output" class="output-container"></div>
+                </div>
+            </div>
+
+            <div id="rankings" class="tab-content">
+                <div class="content-box">
+                    <h2>Rankings Lookup</h2>
+                    <div class="input-group">
+                        <input id="ranking-username" type="text" placeholder="Enter RuneScape Username">
+                        <button id="ranking-button" class="osrs-button">Check Rankings</button>
+                    </div>
+                    <div id="ranking-output" class="output-container"></div>
+                </div>
+            </div>
+
+            <div id="ge" class="tab-content">
+                <div class="content-box">
+                    <h2>Grand Exchange Lookup</h2>
+                    <div class="input-group">
+                        <input id="item-id" type="text" placeholder="Enter Item ID">
+                        <button id="ge-button" class="osrs-button">Check Price</button>
+                    </div>
+                    <div id="ge-output" class="output-container"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+    <script src="./renderer.js"></script>
+</body>
+</html> -->
