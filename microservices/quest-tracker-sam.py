@@ -20,26 +20,24 @@ class QuestTracker:
             
             #Receive input from the Client
             message = self.socket.recv_json()
-            self.userName = message['username']
-            
-            #pull variable from the input, UNCOMMENT FOR FINAL CODE SUBMISSION
-            # requestType = message['requestType']
-            
+            self.userName = message['userName']
+            requestType = message['requestType']
             
             print(f'Username {self.userName} recieved.')
             questsURL = f'https://apps.runescape.com/runemetrics/quests?user={self.userName}'
+            print('Getting user data...')
             statusCode = requests.get(questsURL)
-            
+            print('checking user data...')
             #----------------------------------------------------------------------------------
             # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP 
-            message = {
-                'userName': 'Prenzlauer',
-                'requestType': 'eligibility',
-                'questName': "Cook's Assistant"
-            }
-            self.userName = message['userName']
-            requestType = message['requestType']
-            questName = message['questName']
+            # message = {
+            #     'userName': 'Prenzlauer',
+            #     'requestType': 'eligibility',
+            #     'questName': "Cook's Assistant"
+            # }
+            # self.userName = message['userName']
+            # requestType = message['requestType']
+            # questName = message['questName']
             
             # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP 
             #----------------------------------------------------------------------------------
@@ -50,14 +48,20 @@ class QuestTracker:
                 match requestType:
                     case 'all quests':
                         self.getAllQuests(statusCode)
-                    case 'quest details':
-                        questName = message['questName']
-                        self.getQuestDetails(questName, statusCode)
-                    case 'eligibility':
-                        self.userIsEligible(questName)
-                    case _:
-                        #return JSON with message of Invalid input
-                        pass
+                        print('Sending all quests...')
+                        ##recieve the quest choice or a cancel
+                        message = self.socket.recv_json()
+                        if message['questName'] is not None:
+                            questName = message['questName']
+                            self.getQuestDetails(questName, statusCode)
+                            
+                    # case 'quest details':
+
+                    # case 'eligibility':
+                    #     self.userIsEligible(questName)
+                    # case _:
+                    #     #return JSON with message of Invalid input
+                    #     pass
 
             else:
                 #username doesn't exist or status code is not OK
@@ -87,30 +91,32 @@ class QuestTracker:
         questDetails = {}
         questJson = statusCode.json()
         
+        #look for quest by name
         for quest in range(len(questJson['quests'])):
             if questJson['quests'][quest]['title'] == questName:
                 index = quest
                 break
         
+        #add details to dictionary to send as JSON
         questDetails.update({'title': questName,
                              'status':questJson['quests'][index]['status'],
                              'difficulty':questJson['quests'][index]['difficulty'],
                              'questPoints':questJson['quests'][index]['questPoints'],
                              'membersOnly':questJson['quests'][index]['members'],
-                             'eligible':questJson['quests'][index]['userEligible']
+                             'eligible':questJson['quests'][index]['userEligible'],
+                             'message':None
                                  })
         
+        #ask the user if they want to find out more details if they are eligible for the quest
         if questJson['quests'][index]['userEligible'] is True:
-            questDetails['eligible'] = 'You are eligible to start this quest. Do you want to know what to do next?'
+            questDetails['message'] = 'You are eligible to start this quest. Do you want to know what to do next?'
             
+            #send/recieve
             self.socket.send_json(questDetails)
-            #UNCOMMENT FOR FINAL
             message = self.socket.recv_json()
-            if message['answer'] == 'details':
-                self.userIsEligible(questName)
             
-            #REMOVE FOR FINAL
-            # self.userIsEligible(questName)
+            if message['answer'] == 'yes':
+                self.userIsEligible(questName)
         else:
             questDetails['eligible'] = 'You are NOT eligible to start this quest, yet.'
         
