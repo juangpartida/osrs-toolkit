@@ -56,16 +56,24 @@ class questTester():
             userInput = int(input('1-Yes\n2-No\n'))
             if userInput == 1:
                 data.update({'answer':'yes'})
+                #send/receive                
+                self.socket.send_json(data)
+                message = self.socket.recv_json()
             else:
                 data.update({'answer':'no'})
+                self.socket.send_json(data) 
                 
-        #send/receive                
-        self.socket.send_json(data)
-        message = self.socket.recv_json()
+
         
         print(message)
         
 
+
+
 if __name__ == '__main__':
     tester = questTester()
     tester.main()
+    # string = "Witch's Potion (miniquest)"
+    # # print(len('(miniquest)'))
+    # print(string[-12:len(string)])
+    # print(string[:-12])

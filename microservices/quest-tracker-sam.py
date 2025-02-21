@@ -28,19 +28,7 @@ class QuestTracker:
             print('Getting user data...')
             statusCode = requests.get(questsURL)
             print('checking user data...')
-            #----------------------------------------------------------------------------------
-            # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP 
-            # message = {
-            #     'userName': 'Prenzlauer',
-            #     'requestType': 'eligibility',
-            #     'questName': "Cook's Assistant"
-            # }
-            # self.userName = message['userName']
-            # requestType = message['requestType']
-            # questName = message['questName']
-            
-            # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP 
-            #----------------------------------------------------------------------------------
+
             
             #server is running and User name is valid
             if statusCode.status_code == 200 and statusCode.text != '{"quests":[],"loggedIn":"false"}':
@@ -118,16 +106,21 @@ class QuestTracker:
             if message['answer'] == 'yes':
                 self.userIsEligible(questName)
         else:
-            questDetails['eligible'] = 'You are NOT eligible to start this quest, yet.'
+            questDetails['message'] = 'You are NOT eligible to start this quest, yet.'
+            self.socket.send_json(questDetails)
         
     
     def userIsEligible(self, questName):
         #For reference: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
         
-        questName = quote(questName)
-        questName = questName.replace(' ', '_')
+        #drop (miniquest from string questname)
+        questName = self.cleanQuestname(questName)
+        
+
         url = f'https://oldschool.runescape.wiki/api.php?action=parse&page={questName}&format=json'
         response = requests.get(url)
+        
+        print(url)
         
         data = response.json()['parse']['text']['*']
         soup = BeautifulSoup(data, 'html.parser')
@@ -139,15 +132,37 @@ class QuestTracker:
         quest = {}
 
         for item in range(len(questDetailsHeaders)):
-            quest.update({questDetailsHeaders[item] : questDetailsinfo[item]})
+            # details = questDetailsinfo[item]
+            
+            details = self.addLineBreak(questDetailsinfo[item])
+            
+            quest.update({questDetailsHeaders[item] : details})
+            
+        #add breaks to list item is requirements?
             
         self.socket.send_json(quest)
     
+    def addLineBreak(self, string):
+        brokenString = string
+        for i in range(len(string)):
+            if string[i].isupper():
+                if i > 0 and string[i-1].islower():
+                    brokenString = string[:i] + '\n' + string[i:]
+        return brokenString
 
+    def cleanQuestname(self, questName):
+        if questName[-12:len(questName)] == ' (miniquest)':
+            questName = questName[:-12]
+        
+        questName = quote(questName)
+        questName = questName.replace(' ', '_')
+        return questName
     
 if __name__ == '__main__':
     tracker = QuestTracker()
     tracker.main()
+    
+    
 # false user: vcx
 # test user: Prenzlauer
 
@@ -161,3 +176,17 @@ if __name__ == '__main__':
 
 # User Story 3: 
     # As a player, I want to check which quests I am eligible to start so that I can decide what to do next.
+
+    #----------------------------------------------------------------------------------
+# TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP 
+# message = {
+#     'userName': 'Prenzlauer',
+#     'requestType': 'eligibility',
+#     'questName': "Cook's Assistant"
+# }
+# self.userName = message['userName']
+# requestType = message['requestType']
+# questName = message['questName']
+
+# TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP # TEMP 
+#----------------------------------------------------------------------------------
