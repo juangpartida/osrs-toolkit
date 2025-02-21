@@ -74,6 +74,7 @@ if __name__ == '__main__':
     tester = questTester()
     tester.main()
     # string = "Witch's Potion (miniquest)"
-    # # print(len('(miniquest)'))
-    # print(string[-12:len(string)])
-    # print(string[:-12])
+    # string = 'Vengeance (saga)'
+    # print(len('(miniquest)'))
+    # print(string[-7:len(string)])
+    # print(string[:-7])

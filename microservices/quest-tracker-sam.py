@@ -117,7 +117,8 @@ class QuestTracker:
         questName = self.cleanQuestname(questName)
         
 
-        url = f'https://oldschool.runescape.wiki/api.php?action=parse&page={questName}&format=json'
+        # url = f'https://oldschool.runescape.wiki/api.php?action=parse&page={questName}&format=json'
+        url = f'https://runescape.wiki/api.php?action=parse&page={questName}&format=json'
         response = requests.get(url)
         
         print(url)
@@ -151,8 +152,10 @@ class QuestTracker:
         return brokenString
 
     def cleanQuestname(self, questName):
-        if questName[-12:len(questName)] == ' (miniquest)':
-            questName = questName[:-12]
+        # if questName[-12:len(questName)] == ' (miniquest)':
+        #     questName = questName[:-12]
+        # elif questName[-7:len(questName)] == ' (saga)':
+        #     questName = questName[:-7]
         
         questName = quote(questName)
         questName = questName.replace(' ', '_')
