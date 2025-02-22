@@ -1,7 +1,6 @@
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 import zmq
-import time
 import requests
 
 class QuestTracker:
@@ -47,9 +46,9 @@ class QuestTracker:
 
                     # case 'eligibility':
                     #     self.userIsEligible(questName)
-                    # case _:
-                    #     #return JSON with message of Invalid input
-                    #     pass
+                    case _:
+                        #return JSON with message of Invalid input
+                        pass
 
             else:
                 #username doesn't exist or status code is not OK
@@ -120,8 +119,6 @@ class QuestTracker:
         # url = f'https://oldschool.runescape.wiki/api.php?action=parse&page={questName}&format=json'
         url = f'https://runescape.wiki/api.php?action=parse&page={questName}&format=json'
         response = requests.get(url)
-        
-        print(url)
         
         data = response.json()['parse']['text']['*']
         soup = BeautifulSoup(data, 'html.parser')
