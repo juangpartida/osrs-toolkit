@@ -4,11 +4,12 @@
     "description": "OSRS Toolkit using Electron and ZeroMQ",
     "main": "main.js",
     "scripts": {
-      "start": "electron ."
+        "start": "electron ."
     },
     "dependencies": {
-      "electron": "^26.0.0",
-      "zeromq": "^6.0.0"
+        "zeromq": "^6.0.0"
+    },
+    "devDependencies": {
+        "electron": "^34.2.0"
     }
-  }
-  
+}
